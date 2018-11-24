@@ -1,10 +1,11 @@
+from django.db import transaction
 from django.shortcuts import render
 
 # Create your views here.
 
 import django_filters.rest_framework
 
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
@@ -39,4 +40,12 @@ class NodeViewSet(viewsets.ModelViewSet):
         return res
 
 
+@api_view(['POST'])
+def bulk_node_create(request):
+    with transaction.atomic():
+        Node.objects.all().delete()
+        for node in request.data:
+            serializer = NodeSerializer(data=node)
+            serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
 
