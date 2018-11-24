@@ -18,7 +18,7 @@ class NodeViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
     filter_fields = ('id',)
     queryset = Node.objects.all()

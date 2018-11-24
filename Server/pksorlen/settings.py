@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'rest_framework_swagger',
+    'rest_framework.authtoken',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -172,3 +173,6 @@ LOGGING = {
         'router': APP_LOG_SETUP,
     },
 }
+
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
