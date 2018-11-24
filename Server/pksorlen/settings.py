@@ -25,12 +25,20 @@ SECRET_KEY = 'uxhw&-^!@d0c#=#!-hspbwvq)phg@wb4^#8=ltl+^9(b^g%gwq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+AUTH_USER_MODEL = 'core.CustomUser'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'core',
+    'router',
+    'django_filters',
+    'rest_framework',
+    'rest_framework_swagger',
+    'rest_framework.authtoken',
+    'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,3 +126,55 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+GOOGLE_MAPS_API_KEY = 'AIzaSyBbU8a4ySNmGepBLM1YJXMCZr8lMDu6GRU'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M",
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'ORDERING_PARAM': 'order_by',
+}
+
+APP_LOG_SETUP = {
+    'handlers': ['console'],
+    'level': 'DEBUG',
+    'propagate': True,
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'api': APP_LOG_SETUP,
+        'core': APP_LOG_SETUP,
+        'pksorlen': APP_LOG_SETUP,
+        'router': APP_LOG_SETUP,
+    },
+}
+
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -1,4 +1,5 @@
 .idea
 *.pyc
 
-pksorlen
+pksorlen*.pyc
+db.sqlite3
