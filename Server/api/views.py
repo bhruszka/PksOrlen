@@ -29,6 +29,8 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         res = super(NodeViewSet, self).create(request, *args, **kwargs)
+        if isinstance(kwargs.get('data', {}), list):
+            Node.objects.all().delete()
         if 'id' in res.data and res.data['adjacent_nodes']:
             calculate_distances.delay(res.data['id'])
         return res
@@ -41,4 +43,8 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
             calculate_distances.delay(res.data['id'])
         return res
 
+
+@api_view(['GET'])
+def create_route(request, start_node_id, destination_node_id):
+    pass
 
