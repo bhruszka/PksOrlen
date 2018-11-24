@@ -25,7 +25,7 @@ export default {
     window.initMap = this.initMap;
   },
   methods: {
-    initMap: function() {
+    initMap: async function() {
       this.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 52.588262, lng: 19.67104 },
         zoom: 15
@@ -77,8 +77,27 @@ export default {
           self.selectedNode = null;
         }
       });
+
+      let result = await this.$http.get(`https://pksorlen.pl/api/nodes/`);
+      result.data.forEach(n => {
+        this.addMarker(
+          { lat: Number(n.latitude), lng: Number(n.longitude) },
+          n.adjacent_nodes, n.id
+        );
+      });
+
+      this.nodes.forEach(n => {
+        n.adjacent_nodes.forEach(a => {
+          this.addRouteNoRemove(
+            n,
+            this.nodes.find(m => {
+              if (m.id == a) return m
+            })
+          );
+        });
+      });
     },
-    addMarker: function(latlng) {
+    addMarker: function(latlng, adjacent_nodes = null, id = null) {
       console.log(latlng);
       var marker = new google.maps.Marker({
         position: latlng,
@@ -90,7 +109,7 @@ export default {
       let self = this;
 
       google.maps.event.addListener(marker, "click", function(event) {
-        console.log(self.selectedNode)
+        console.log(self.selectedNode);
         if (self.selectedNode == this) {
           self.selectedNode.setIcon(
             "https://castdeo.ams3.cdn.digitaloceanspaces.com/intersection.png"
@@ -133,6 +152,13 @@ export default {
       });
 
       marker.routes = [];
+      if (adjacent_nodes != null) {
+        marker.adjacent_nodes = adjacent_nodes;
+      }
+      if (id != null) {
+        marker.id = id;
+      }
+
 
       this.nodes.push(marker);
     },
@@ -145,22 +171,40 @@ export default {
         createRoute(n1, n2, this.map);
       }
     },
-    postTopo: function() {
+    addRouteNoRemove: function(n1, n2) {
+      console.log(n1);
+      console.log(n2);
+      let index = n1.routes.findIndex(x => x.line.n1 == n2 || x.line.n2 == n2);
+      if (index != -1) {
+        return;
+      } else {
+        createRoute(n1, n2, this.map);
+      }
+    },
+    postTopo: async function() {
       let data = [];
       this.nodes.forEach((n, index) => {
-        n.id = index;
+        n.id = index + 1;
       });
       this.nodes.forEach((n, index) => {
         let adjacent_nodes = n.routes.map(x => x.id);
-        console.log(n.position.lat())
         data.push({
           id: n.id,
           longitude: n.position.lng(),
-          latitude: n.position.lat(),
+          latitude: n.position.lat()
+        });
+      });
+      await this.$http.post("https://pksorlen.pl/api/nodes/", data);
+
+      this.nodes.forEach((n, index) => {
+        let adjacent_nodes = n.routes.map(
+          x => x.line[x.index == 1 ? "n1" : "n2"].id
+        );
+        this.$http.patch(`https://pksorlen.pl/api/nodes/${n.id}/`, {
+          pk: n.id,
           adjacent_nodes: adjacent_nodes
         });
       });
-      this.$http.post("https://pksorlen.pl/api/nodes/", data);
     }
   }
 };
