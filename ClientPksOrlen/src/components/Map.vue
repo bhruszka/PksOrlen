@@ -82,7 +82,8 @@ export default {
       result.data.forEach(n => {
         this.addMarker(
           { lat: Number(n.latitude), lng: Number(n.longitude) },
-          n.adjacent_nodes, n.id
+          n.adjacent_nodes,
+          n.id
         );
       });
 
@@ -91,7 +92,7 @@ export default {
           this.addRouteNoRemove(
             n,
             this.nodes.find(m => {
-              if (m.id == a) return m
+              if (m.id == a) return m;
             })
           );
         });
@@ -132,13 +133,13 @@ export default {
       google.maps.event.addListener(marker, "dblclick", function(event) {
         console.log(self.nodes.indexOf(marker));
         self.nodes.splice(self.nodes.indexOf(marker), 1);
-        if (self.selectedNode == null) {
+        if (self.selectedNode != null) {
           self.selectedNode.setIcon(
             "https://castdeo.ams3.cdn.digitaloceanspaces.com/intersection.png"
           );
         }
         self.selectedNode = null;
-        removeNode(marker);
+        removeNode(this);
         event.stop();
       });
 
@@ -158,7 +159,6 @@ export default {
       if (id != null) {
         marker.id = id;
       }
-
 
       this.nodes.push(marker);
     },
