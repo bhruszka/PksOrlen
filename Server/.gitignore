@@ -1,3 +1,5 @@
 .idea
 *.pyc
+
+pksorlen*.pyc
 db.sqlite3
