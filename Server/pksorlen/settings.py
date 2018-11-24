@@ -34,6 +34,10 @@ AUTH_USER_MODEL = 'core.CustomUser'
 INSTALLED_APPS = [
     'core',
     'router',
+    'django_filters',
+    'rest_framework',
+    'rest_framework_swagger',
+    'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -123,3 +127,48 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 GOOGLE_MAPS_API_KEY = 'AIzaSyBbU8a4ySNmGepBLM1YJXMCZr8lMDu6GRU'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M",
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'ORDERING_PARAM': 'order_by',
+}
+
+APP_LOG_SETUP = {
+    'handlers': ['console'],
+    'level': 'DEBUG',
+    'propagate': True,
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'api': APP_LOG_SETUP,
+        'core': APP_LOG_SETUP,
+        'pksorlen': APP_LOG_SETUP,
+        'router': APP_LOG_SETUP,
+    },
+}

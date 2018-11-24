@@ -12,7 +12,7 @@ class Node(CommonModel):
     longitude = models.CharField(max_length=15)
     latitude = models.CharField(max_length=15)
 
-    adjacent_nodes = models.ManyToManyField('self', blank=True, null=True)
+    adjacent_nodes = models.ManyToManyField('self')
 
     all_distances_calculated = models.BooleanField(default=False)
 
