@@ -25,12 +25,15 @@ SECRET_KEY = 'uxhw&-^!@d0c#=#!-hspbwvq)phg@wb4^#8=ltl+^9(b^g%gwq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+AUTH_USER_MODEL = 'core.CustomUser'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'core',
+    'router',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
