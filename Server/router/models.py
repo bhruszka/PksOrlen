@@ -1,15 +1,37 @@
+import json
+
 from django.db import models
 
 # Create your models here.
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Case, When
 
 from core.models import CommonModel
 
 
+class Route(CommonModel):
+    route_ids_json = models.TextField()
+
+    @property
+    def route_ids(self):
+        return json.loads(self.route_ids_json)
+
+    @property
+    def route(self):
+        """
+        Return correctly ordered queryset of Nodes
+
+        :return: Route Queryset
+        """
+        pk_list = self.route_ids
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(pk_list)])
+        return Node.objects.filter(pk__in=pk_list).order_by(preserved)
+
+
 class Node(CommonModel):
-    longitude = models.CharField(max_length=15)
-    latitude = models.CharField(max_length=15)
+    longitude = models.CharField(max_length=30)
+    latitude = models.CharField(max_length=30)
 
     adjacent_nodes = models.ManyToManyField('self', blank=True)
 
@@ -34,9 +56,9 @@ class Node(CommonModel):
         pass
 
 
-class Distance(CommonModel):
-    node_1 = models.ForeignKey(Node, models.CASCADE, related_name='_start_distances')
-    node_2 = models.ForeignKey(Node, models.CASCADE, related_name='_end_distances')
+class Edge(CommonModel):
+    node_1 = models.ForeignKey(Node, models.CASCADE, related_name='_start_edges')
+    node_2 = models.ForeignKey(Node, models.CASCADE, related_name='_end_edges')
 
     distance = models.IntegerField()
     time = models.IntegerField()
@@ -47,5 +69,5 @@ class Distance(CommonModel):
         if self.node_1.id > self.node_2.id:
             # to retain uniqueness in table require node_1 has lower id than node_2
             self.node_1, self.node_2 = self.node_2, self.node_1
-        super(Distance, self).save(*args, **kwargs)
+        super(Edge, self).save(*args, **kwargs)
 

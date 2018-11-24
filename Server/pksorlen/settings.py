@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'core',
     'router',
     'django_filters',
+    'corsheaders',
     'rest_framework',
     'rest_framework_swagger',
     'rest_framework.authtoken',
@@ -55,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'pksorlen.urls'
@@ -178,3 +181,6 @@ LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
