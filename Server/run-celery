@@ -1,0 +1,3 @@
+#!/bin/bash
+
+celery -A pksorlen-service worker -l info --app=pksorlen.celery:app
