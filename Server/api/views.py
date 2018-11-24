@@ -9,13 +9,15 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
+from rest_framework.views import APIView
 
+from api.mixins import BulkyMethodsMixin
 from api.serializers import NodeSerializer
 from router.models import Node
 from router.jobs import calculate_distances
 
 
-class NodeViewSet(viewsets.ModelViewSet):
+class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
@@ -39,13 +41,4 @@ class NodeViewSet(viewsets.ModelViewSet):
             calculate_distances.delay(res.data['id'])
         return res
 
-
-@api_view(['POST'])
-def bulk_node_create(request):
-    with transaction.atomic():
-        Node.objects.all().delete()
-        for node in request.data:
-            serializer = NodeSerializer(data=node)
-            serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
 
