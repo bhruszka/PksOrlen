@@ -1,5 +1,8 @@
 <template>
-    <div id="map"></div>
+    <div>
+        <div id="map"></div>
+        <button @click="postTopo" style="z-index: 9; position: absolute; top: 50px;">Submit</button>
+    </div>
 </template>
 <script>
 import { createRoute, removeRoute, removeNode } from "../utils/utils.js";
@@ -74,8 +77,6 @@ export default {
           self.selectedNode = null;
         }
       });
-
-      this.addMarker(new google.maps.LatLng(52.588262, 19.67104));
     },
     addMarker: function(latlng) {
       console.log(latlng);
@@ -89,6 +90,7 @@ export default {
       let self = this;
 
       google.maps.event.addListener(marker, "click", function(event) {
+        console.log(self.selectedNode)
         if (self.selectedNode == this) {
           self.selectedNode.setIcon(
             "https://castdeo.ams3.cdn.digitaloceanspaces.com/intersection.png"
@@ -111,6 +113,12 @@ export default {
       google.maps.event.addListener(marker, "dblclick", function(event) {
         console.log(self.nodes.indexOf(marker));
         self.nodes.splice(self.nodes.indexOf(marker), 1);
+        if (self.selectedNode == null) {
+          self.selectedNode.setIcon(
+            "https://castdeo.ams3.cdn.digitaloceanspaces.com/intersection.png"
+          );
+        }
+        self.selectedNode = null;
         removeNode(marker);
         event.stop();
       });
@@ -136,6 +144,23 @@ export default {
       } else {
         createRoute(n1, n2, this.map);
       }
+    },
+    postTopo: function() {
+      let data = [];
+      this.nodes.forEach((n, index) => {
+        n.id = index;
+      });
+      this.nodes.forEach((n, index) => {
+        let adjacent_nodes = n.routes.map(x => x.id);
+        console.log(n.position.lat())
+        data.push({
+          id: n.id,
+          longitude: n.position.lng(),
+          latitude: n.position.lat(),
+          adjacent_nodes: adjacent_nodes
+        });
+      });
+      this.$http.post("https://pksorlen.pl/api/nodes/", data);
     }
   }
 };
@@ -144,7 +169,7 @@ export default {
 /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
 #map {
-  height: 80vh;
+  height: 100vh;
 }
 /* Optional: Makes the sample page fill the window. */
 html,
