@@ -5,14 +5,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from core.models import CommonModel
-from router.jobs import calculate_distances
 
 
 class Node(CommonModel):
     longitude = models.CharField(max_length=15)
     latitude = models.CharField(max_length=15)
 
-    adjacent_nodes = models.ManyToManyField('self')
+    adjacent_nodes = models.ManyToManyField('self', blank=True)
 
     all_distances_calculated = models.BooleanField(default=False)
 
