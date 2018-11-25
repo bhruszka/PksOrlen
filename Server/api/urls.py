@@ -13,4 +13,6 @@ urlpatterns = [
     path('', include(router.urls)),
     url(r'^api-token-auth/', token_views.obtain_auth_token),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(u'^generate-route/<int:start_node_id>/<int:destination_node_id>/', api_views.create_route),
+    url(u'^nodes-bulk-patch/', api_views.bulk_patch_node),
 ]

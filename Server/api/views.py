@@ -44,6 +44,17 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
         return res
 
 
+@api_view(['PATCH'])
+def bulk_patch_node(request):
+    assert isinstance(request.data, list)
+
+    serializer = NodeSerializer(data=request.data, many=True, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    return Response('OK')
+
+
 @api_view(['GET'])
 def create_route(request, start_node_id, destination_node_id):
     pass
