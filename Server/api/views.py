@@ -98,19 +98,19 @@ def bulk_patch_node(request):
     return Response('OK')
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes((permissions.AllowAny, ))
 def create_truck_route(request):
     truck = Truck()
-    if request.data['start']['type'] == 'node':
-        truck.start_node = Node.objects.get(id=request.data['start']['id'])
-    elif request.data['start']['type'] == 'edge':
-        truck.start_edge = Edge.objects.get(id=request.data['start']['id'])
+    if request.query_params['start_type'] == 'node':
+        truck.start_node = Node.objects.get(id=request.query_params['start_id'])
+    elif request.query_params['start_type'] == 'edge':
+        truck.start_edge = Edge.objects.get(id=request.query_params['start_id'])
 
-    if request.data['finish']['type'] == 'node':
-        truck.end_node = Node.objects.get(id=request.data['finish']['id'])
-    elif request.data['finish']['type'] == 'edge':
-        truck.end_edge = Edge.objects.get(id=request.data['finish']['id'])
+    if request.query_params['finish_type'] == 'node':
+        truck.end_node = Node.objects.get(id=request.query_params['finish_id'])
+    elif request.query_params['finish_type'] == 'edge':
+        truck.end_edge = Edge.objects.get(id=request.query_params['finish_id'])
 
     truck.save()
 
