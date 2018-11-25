@@ -18,7 +18,7 @@ from router.jobs import calculate_distances
 
 
 class RouteViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
-    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
     filter_fields = ('id',)
     queryset = Route.objects.all()
@@ -26,7 +26,7 @@ class RouteViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
 
 
 class TruckViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
-    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
     filter_fields = ('id',)
     queryset = Truck.objects.all()
@@ -34,7 +34,7 @@ class TruckViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
 
 
 class EdgeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
-    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
     filter_fields = ('id', 'has_bus_stop')
     queryset = Edge.objects.all()
@@ -45,7 +45,7 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
     filter_fields = ('id',)
     queryset = Node.objects.all()
@@ -82,6 +82,7 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
 
 
 @api_view(['PATCH'])
+@permission_classes((permissions.AllowAny, ))
 def bulk_patch_node(request):
     assert isinstance(request.data, list)
 
@@ -98,6 +99,7 @@ def bulk_patch_node(request):
 
 
 @api_view(['POST'])
+@permission_classes((permissions.AllowAny, ))
 def create_truck_route(request):
     truck = Truck()
     if request.data['start']['type'] == 'node':
