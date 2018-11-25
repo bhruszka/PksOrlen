@@ -1,7 +1,6 @@
 <template>
     <div>
         <div id="map"></div>
-        <button style="z-index: 9; position: absolute; top: 50px;">Submit</button>
     </div>
 </template>
 <script>
@@ -20,7 +19,6 @@ export default {
     script.src =
       "https://maps.googleapis.com/maps/api/js?key=AIzaSyBbU8a4ySNmGepBLM1YJXMCZr8lMDu6GRU&callback=initMap";
     document.head.appendChild(script);
-
     window.initMap = this.initMap;
   },
   methods: {
@@ -62,119 +60,65 @@ export default {
         self.map.setCenter(new google.maps.LatLng(y, x));
       });
 
-      let result = await this.$http.get(`https://pksorlen.pl/api/nodes/`);
-      result.data.forEach(n => {
-        this.addMarker(
-          { lat: Number(n.latitude), lng: Number(n.longitude) },
-          n.adjacent_nodes,
-          n.id
-        );
-      });
+      let result = await this.$http.get(`https://pksorlen.pl/api/edges/`);
+      //   result.data.forEach(n => {
+      //     this.addMarker(
+      //       { lat: Number(n.latitude), lng: Number(n.longitude) },
+      //       n.adjacent_nodes,
+      //       n.id
+      //     );
+      //   });
 
-      this.nodes.forEach(n => {
-        n.adjacent_nodes.forEach(a => {
-          this.addRouteNoRemove(
-            n,
-            this.nodes.find(m => {
-              if (m.id == a) return m;
-            })
-          );
-        });
+      result.data.forEach(n => {
+        this.createRoute(n.node_1, n.node_2, n.id, n.has_bus_stop);
       });
     },
-    addMarker: function(latlng, adjacent_nodes = null, id = null) {
+    addMarker: function(latlng, id) {
       console.log(latlng);
       var marker = new google.maps.Marker({
         position: latlng,
         map: this.map,
         icon: "https://castdeo.ams3.cdn.digitaloceanspaces.com/intersection.png"
       });
-
-      marker.routes = [];
-      if (adjacent_nodes != null) {
-        marker.adjacent_nodes = adjacent_nodes;
-      }
-      if (id != null) {
-        marker.id = id;
-      }
-
-      this.nodes.push(marker);
+      marker.id = id;
+      google.maps.event.addListener(marker, "click", function(event) {
+        window.open(
+          `https://pksorlen.pl/admin/router/node/${marker.id}/change/`,
+          "_self"
+        );
+      });
     },
-    addStop: function(route) {
-      if (route.stop) {
-        route.marker.setMap(null);
-        route.stop = false;
-      } else {
-        let path = route.getPath().getArray();
-        let lat = (path[0].lat() + path[1].lat()) / 2;
-        let lng = (path[0].lng() + path[1].lng()) / 2;
-
-        let marker = new google.maps.Marker({
-          position: { lat: lat, lng: lng },
-          map: this.map
-        });
-
-        marker.route = route;
-
-        google.maps.event.addListener(marker, "dblclick", function(event) {
-          this.route.marker.setMap(null);
-          this.route.stop = false;
-        });
-
-        route.stop = true;
-        route.marker = marker;
-      }
-    },
-    addRouteNoRemove: function(n1, n2) {
-      let index = n1.routes.findIndex(x => x.line.n1 == n2 || x.line.n2 == n2);
-      if (index != -1) {
-        return;
-      } else {
-        this.createRoute(n1, n2);
-      }
-    },
-    createRoute: function(n1, n2) {
+    createRoute: function(n1, n2, id, has_bus_stop = false) {
       var line = new google.maps.Polyline({
-        path: [n1.position, n2.position],
+        path: [
+          { lat: Number(n1.latitude), lng: Number(n1.longitude) },
+          { lat: Number(n2.latitude), lng: Number(n2.longitude) }
+        ],
         strokeColor: "#FF0000",
         strokeOpacity: 1.0,
         strokeWeight: 5,
         map: this.map
       });
 
-      line.n1 = n1;
-      line.n2 = n2;
-      n1.routes.push({ line: line, index: 0 });
-      n2.routes.push({ line: line, index: 1 });
+      console.log(`id: ${id}`);
+      line.id = id;
+      line.has_bus_stop = has_bus_stop;
+
+      this.addMarker(
+        { lat: Number(n1.latitude), lng: Number(n1.longitude) },
+        n1.id
+      );
+      this.addMarker(
+        { lat: Number(n2.latitude), lng: Number(n2.longitude) },
+        n2.id
+      );
 
       let self = this;
-      google.maps.event.addListener(line, "dblclick", function(event) {
-        self.addStop(this);
-      });
-    },
-    postStops: async function() {
-      let data = [];
-      this.nodes.forEach((n, index) => {
-        n.id = index + 1;
-      });
-      this.nodes.forEach((n, index) => {
-        let adjacent_nodes = n.routes.map(x => x.id);
-        data.push({
-          id: n.id,
-          longitude: n.position.lng(),
-          latitude: n.position.lat()
-        });
-      });
-      await this.$http.post("https://pksorlen.pl/api/nodes/", data);
-
-      this.nodes.forEach((n, index) => {
-        let adjacent_nodes = n.routes.map(
-          x => x.line[x.index == 1 ? "n1" : "n2"].id
+      google.maps.event.addListener(line, "click", function(event) {
+        window.open(
+          `https://pksorlen.pl/admin/router/edge/${line.id}/change/`,
+          "_self"
         );
-        this.$http.patch(`https://pksorlen.pl/api/nodes/${n.id}/`, {
-          pk: n.id,
-          adjacent_nodes: adjacent_nodes
-        });
       });
     }
   }

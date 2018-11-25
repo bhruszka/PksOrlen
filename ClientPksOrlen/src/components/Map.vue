@@ -1,7 +1,7 @@
 <template>
     <div>
         <div id="map"></div>
-        <button @click="postTopo" style="z-index: 9; position: absolute; top: 50px;">Submit</button>
+        <a @click="postTopo" class="button" style="z-index: 9; position: absolute; top: 8px;"><strong>Submit</strong></a>
     </div>
 </template>
 <script>
