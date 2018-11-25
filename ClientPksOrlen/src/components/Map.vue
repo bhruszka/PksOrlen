@@ -183,28 +183,27 @@ export default {
     },
     postTopo: async function() {
       let data = [];
+      let data_patch = [];
       this.nodes.forEach((n, index) => {
         n.id = index + 1;
       });
       this.nodes.forEach((n, index) => {
-        let adjacent_nodes = n.routes.map(x => x.id);
+        let adjacent_nodes = n.routes.map(
+          x => x.line[x.index == 1 ? "n1" : "n2"].id
+        );
         data.push({
           id: n.id,
           longitude: n.position.lng(),
           latitude: n.position.lat()
+          //   adjacent_nodes: adjacent_nodes
         });
-      });
-      await this.$http.post("https://pksorlen.pl/api/nodes/", data);
-
-      this.nodes.forEach((n, index) => {
-        let adjacent_nodes = n.routes.map(
-          x => x.line[x.index == 1 ? "n1" : "n2"].id
-        );
-        this.$http.patch(`https://pksorlen.pl/api/nodes/${n.id}/`, {
-          pk: n.id,
+        data_patch.push({
+          id: n.id,
           adjacent_nodes: adjacent_nodes
         });
       });
+      await this.$http.post("https://pksorlen.pl/api/nodes/", data);
+      await this.$http.patch("https://pksorlen.pl/api/nodes-bulk-patch/", data_patch);
     }
   }
 };
