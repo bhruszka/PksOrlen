@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from django.db.models import Case, When
 
 from core.models import CommonModel
+from router.utils.route_finder import create_route
 
 
 class Route(CommonModel):
@@ -118,11 +119,29 @@ class Truck(CommonModel):
     start_edge = models.ForeignKey(Edge, models.CASCADE, null=True, related_name='trucks_starting')
     end_edge = models.ForeignKey(Edge, models.CASCADE, null=True, related_name='trucks_ending')
 
+    route = models.ForeignKey(Route, models.SET_NULL, null=True, related_name='trucks')
+
     def save(self, *args, **kwargs):
-        super(Truck, self).save(*args, **kwargs)
         start = self.start_node or self.start_edge or None
         end = self.end_node or self.end_edge or None
 
-        if (self.start_node or self.start_edge) and (self.end_edge)
+        if start and end:
+            start_node = None
+            if isinstance(start, Edge):
+                start_node = start.node_1
+            else:
+                start_node = start
+
+            end_node = None
+            if isinstance(end, Edge):
+                end_node = end.node_1
+            else:
+                end_node = end
+
+            self.route = create_route(start_node, end_node)
+
+        super(Truck, self).save(*args, **kwargs)
+
+
 
 
