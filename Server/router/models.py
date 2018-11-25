@@ -38,7 +38,7 @@ class Node(CommonModel):
     all_distances_calculated = models.BooleanField(default=False)
 
     @property
-    def get_location_tuple(self):
+    def get_node_tuple(self):
         return self.latitude, self.longitude
 
     @staticmethod
@@ -63,11 +63,19 @@ class Edge(CommonModel):
     distance = models.IntegerField()
     time = models.IntegerField()
 
-    unique_together = ('node_1', 'node_2')
+    class Meta:
+        unique_together = ('node_1', 'node_2')
 
     def save(self, *args, **kwargs):
         if self.node_1.id > self.node_2.id:
             # to retain uniqueness in table require node_1 has lower id than node_2
             self.node_1, self.node_2 = self.node_2, self.node_1
         super(Edge, self).save(*args, **kwargs)
+
+    @staticmethod
+    def get_edge_ids(n1, n2):
+        if n1 > n2:
+            return Edge.objects.get(node_1=n2, node_2=n1)
+        else:
+            return Edge.objects.get(node_1=n1, node_2=n2)
 

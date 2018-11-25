@@ -31,16 +31,29 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
         if isinstance(request.data, list):
             Node.objects.all().delete()
         res = super(NodeViewSet, self).create(request, *args, **kwargs)
-        if 'id' in res.data and res.data['adjacent_nodes']:
-            calculate_distances.delay(res.data['id'])
+        if isinstance(request.data, list):
+            for node in res.data:
+                if node['adjacent_nodes']:
+                    calculate_distances.delay(node['id'])
+        else:
+            if res.data['adjacent_nodes']:
+                calculate_distances.delay(res.data['id'])
+
         return res
 
     def partial_update(self, request, *args, **kwargs):
         res = super(NodeViewSet, self).partial_update(request, *args, **kwargs)
-        if 'id' in res.data and ('longitude' in res.data or
-                                 'latitude' in res.data or
-                                 'adjacent_nodes' in res.data):
-            calculate_distances.delay(res.data['id'])
+        if isinstance(request.data, list):
+            for node in res.data:
+                if 'id' in res.data and ('longitude' in res.data or
+                                         'latitude' in res.data or
+                                         'adjacent_nodes' in res.data):
+                    calculate_distances.delay(node['id'])
+        else:
+            if 'id' in res.data and ('longitude' in res.data or
+                                     'latitude' in res.data or
+                                     'adjacent_nodes' in res.data):
+                calculate_distances.delay(res.data['id'])
         return res
 
 
@@ -52,6 +65,10 @@ def bulk_patch_node(request):
         serializer = NodeSerializer(Node.objects.get(id=node['id']), data=node, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        if ('longitude' in node or
+                'latitude' in node or
+                'adjacent_nodes' in node):
+            calculate_distances.delay(node['id'])
 
     return Response('OK')
 
