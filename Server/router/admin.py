@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from router.models import Node, Route, Edge, Truck
 
@@ -20,4 +21,12 @@ class RouteAdmin(admin.ModelAdmin):
 
 @admin.register(Truck)
 class TruckAdmin(admin.ModelAdmin):
-    readonly_fields = ['start_node', 'end_node', 'start_edge', 'end_edge']
+    readonly_fields = ['start_node', 'end_node', 'start_edge', 'end_edge', 'qr_code']
+
+    def qr_code(self, obj):
+        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+            url = obj.headshot.url,
+            width=obj.headshot.width,
+            height=obj.headshot.height,
+            )
+    )

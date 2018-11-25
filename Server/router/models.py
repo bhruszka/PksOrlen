@@ -1,13 +1,17 @@
 import json
+from io import BytesIO
 
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
 # Create your models here.
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Case, When
+from django.urls import reverse
 
 from core.models import CommonModel
+import qrcode
 
 
 class Route(CommonModel):
@@ -120,6 +124,8 @@ class Truck(CommonModel):
 
     route = models.ForeignKey(Route, models.SET_NULL, null=True, related_name='trucks')
 
+    qr_code = models.ImageField(null=True, blank=True, upload_to="qr_codes/")
+
     def save(self, *args, **kwargs):
         from router.utils.route_finder import create_route
 
@@ -152,6 +158,18 @@ class Truck(CommonModel):
 
         super(Truck, self).save(*args, **kwargs)
 
+
+@receiver(post_save, sender=Truck)
+def create_qr_code(sender, instance=None, created=False, **kwargs):
+    if created:
+        url = reverse('truck-detail', kwargs={'pk': instance.id})
+        img = qrcode.make(url)
+
+        buffer = BytesIO()
+        img.save(buffer, "PNG")
+        image_file = InMemoryUploadedFile(buffer, None, '{}.png'.format(instance.id), 'image/png', buffer.getbuffer().nbytes, None)
+
+        instance.qr_code.save('{}.png'.format(instance.id), image_file)
 
 
 
