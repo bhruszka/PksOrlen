@@ -142,7 +142,7 @@ GOOGLE_MAPS_API_KEY = 'AIzaSyBbU8a4ySNmGepBLM1YJXMCZr8lMDu6GRU'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -192,3 +192,5 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+X_FRAME_OPTIONS = 'ALLOWALL'
