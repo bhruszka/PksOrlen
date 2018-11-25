@@ -12,9 +12,17 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
 from api.mixins import BulkyMethodsMixin
-from api.serializers import NodeSerializer
-from router.models import Node
+from api.serializers import NodeSerializer, EdgeSerializer
+from router.models import Node, Edge
 from router.jobs import calculate_distances
+
+
+class EdgeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
+    # permission_classes = (permissions.AllowAny,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
+    filter_fields = ('id',)
+    queryset = Edge.objects.all()
+    serializer_class = EdgeSerializer
 
 
 class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):

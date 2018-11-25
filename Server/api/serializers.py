@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from router.models import Node
+from router.models import Node, Edge
 
 
 class NodeSerializer(serializers.ModelSerializer):
@@ -15,3 +15,11 @@ class NodeSerializer(serializers.ModelSerializer):
         ret = super(NodeSerializer, self).to_internal_value(data)
         ret['id'] = data.get('id')
         return ret
+
+
+class EdgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Edge
+        fields = (
+            'id', 'node_1', 'node_2', 'distance', 'time'
+        )
