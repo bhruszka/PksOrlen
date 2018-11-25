@@ -1,4 +1,5 @@
 import json
+import sys
 from io import BytesIO
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -80,9 +81,9 @@ class Edge(CommonModel):
     has_bus_stop = models.BooleanField(default=False)
 
     # road specific fields
-    max_height = models.FloatField(null=True)
-    max_width = models.FloatField(null=True)
-    max_weight = models.FloatField(null=True)
+    max_height = models.FloatField(default=15)
+    max_width = models.FloatField(default=15)
+    max_weight = models.FloatField(default=50)
     open = models.BooleanField(default=True)
 
     class Meta:
@@ -111,9 +112,9 @@ class Edge(CommonModel):
 
 
 class Truck(CommonModel):
-    height = models.FloatField(null=True)
-    width = models.FloatField(null=True)
-    weight = models.FloatField(null=True)
+    height = models.FloatField(default=0)
+    width = models.FloatField(default=0)
+    weight = models.FloatField(default=0)
     turn_radius = models.FloatField(null=True)
 
     start_node = models.ForeignKey(Node, models.CASCADE, null=True, related_name='trucks_starting')

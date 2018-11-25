@@ -4,7 +4,7 @@ import sys
 from collections import defaultdict
 from typing import List
 
-from router.models import Node, Edge, Route as RouteModel
+from router.models import Node, Edge, Route as RouteModel, Truck
 
 
 class Route:
@@ -42,8 +42,22 @@ class Route:
         return copy
 
 
-def get_feasible_nodes(route: Route):
-    return route.path[-1].adjacent_nodes.exclude(id__in=[n.id for n in route.path])
+def get_feasible_nodes(route: Route, truck: Truck):
+    if len(route.path) > 1:
+        ad_nodes = route.path[-1].adjacent_nodes.exclude(
+            id=route.path[-2].id,
+        )
+    else:
+        ad_nodes = route.path[-1].adjacent_nodes.all()
+    ok_nodes = []
+    for n in ad_nodes:
+        e = Edge.get_edge(route.path[-1], n)
+        if e.open:
+            if (e.max_height > truck.height and
+                    e.max_weight > truck.weight and
+                    e.max_width > truck.width):
+                ok_nodes.append(n)
+    return ok_nodes
 
 
 

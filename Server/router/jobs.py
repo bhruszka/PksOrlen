@@ -52,8 +52,12 @@ def calculate_distances(node_id):
 
 @app.task
 def create_route(initial_node_id, destination_node_id, truck_id=None):
+    from router.models import Truck
     from router.models import Node, Edge, Route as RouteModel
     from router.utils.route_finder import get_feasible_nodes
+
+    truck = Truck.objects.get(id=truck_id)
+
     initial_node = Node.objects.get(id=initial_node_id)
     destination_node = Node.objects.get(id=destination_node_id)
 
@@ -64,25 +68,43 @@ def create_route(initial_node_id, destination_node_id, truck_id=None):
     while not any(destination_node in route for route in routes):
         new_routes = []
         for route in routes:
-            for node in get_feasible_nodes(route):
+            for node in get_feasible_nodes(route, truck):
                 new_routes.append(route.copy_and_append(node))
 
         routes += new_routes
 
-    final_route = None
+    first_route = None
     for route in routes:
         if destination_node in route:
-            final_route = route
+            first_route = route
             break
 
-    assert final_route is not None
+    assert first_route is not None
+
+    routes = [Route()]
+    routes[0].append(first_route.path[-2])
+    routes[0].append(first_route.path[-1])
+
+    while not any(initial_node in route for route in routes):
+        new_routes = []
+        for route in routes:
+            for node in get_feasible_nodes(route, truck):
+                new_routes.append(route.copy_and_append(node))
+
+        routes += new_routes
+
+    second_route = None
+    for route in routes:
+        if initial_node in route:
+            second_route = route
+            break
+
+    assert second_route is not None
 
     import json
     r = RouteModel.objects.create(
-        route_ids_json=json.dumps([node.id for node in final_route.path])
+        route_ids_json=json.dumps([node.id for node in first_route.path + second_route.path[2:]])
     )
 
-    if truck_id:
-        from router.models import Truck
-        Truck.objects.get(id=truck_id).update(route=r)
+    Truck.objects.filter(id=truck_id).update(route=r)
 

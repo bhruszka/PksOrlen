@@ -21,7 +21,7 @@ class RouteAdmin(admin.ModelAdmin):
 
 @admin.register(Truck)
 class TruckAdmin(admin.ModelAdmin):
-    readonly_fields = ['start_node', 'end_node', 'start_edge', 'end_edge', 'qr_code']
+    readonly_fields = ['start_node', 'end_node', 'start_edge', 'end_edge', 'qr_code', 'route']
 
     def qr_code(self, obj):
         return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
