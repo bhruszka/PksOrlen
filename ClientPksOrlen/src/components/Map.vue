@@ -1,8 +1,18 @@
 <template>
-    <div>
-        <div id="map"></div>
-        <a @click="postTopo" class="button" style="z-index: 9; position: absolute; top: 8px;"><strong>Submit</strong></a>
+  <div>
+    <div id="map"></div>
+    <div class="menu" style="z-index: 9; position: absolute; top: 8px;">
+      <a href="/" class="button"><strong>Main Page</strong></a>
+      <a @click="postTopo" class="button"><strong>Submit</strong></a>
+      <p style="background-color: white; padding: 5px; radius: 8px; margin-top: 8px;">
+        Instrukcja:<br>
+        Podwojne klikniecie - dodawanie skrzyżowan <br>
+        Click and drag - przesuwanie skrzyżowan <br>
+        Pojedyncze klikniecie na skrzyzowanie i kolejne pojedyncz klikniecie na inne skrzyzowanie - dodanie drogi.
+        Click submit - by zatwierdzić zmiany.
+      </p>
     </div>
+  </div>
 </template>
 <script>
 import { createRoute, removeRoute, removeNode } from "../utils/utils.js";
@@ -201,7 +211,10 @@ export default {
         });
       });
       await this.$http.post("https://pksorlen.pl/api/nodes/", data);
-      await this.$http.patch("https://pksorlen.pl/api/nodes-bulk-patch/", data_patch);
+      await this.$http.patch(
+        "https://pksorlen.pl/api/nodes-bulk-patch/",
+        data_patch
+      );
     }
   }
 };
