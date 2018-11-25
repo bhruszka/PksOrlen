@@ -12,9 +12,25 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
 from api.mixins import BulkyMethodsMixin
-from api.serializers import NodeSerializer, EdgeSerializer
-from router.models import Node, Edge
+from api.serializers import NodeSerializer, EdgeSerializer, TruckSerializer, RouteSerializer
+from router.models import Node, Edge, Truck, Route
 from router.jobs import calculate_distances
+
+
+class RouteViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
+    # permission_classes = (permissions.AllowAny,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
+    filter_fields = ('id',)
+    queryset = Route.objects.all()
+    serializer_class = RouteSerializer
+
+
+class TruckViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
+    # permission_classes = (permissions.AllowAny,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
+    filter_fields = ('id',)
+    queryset = Truck.objects.all()
+    serializer_class = TruckSerializer
 
 
 class EdgeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
@@ -81,7 +97,21 @@ def bulk_patch_node(request):
     return Response('OK')
 
 
-@api_view(['GET'])
-def create_route(request, start_node_id, destination_node_id):
-    pass
+@api_view(['POST'])
+def create_truck_route(request):
+    truck = Truck()
+    if request.data['start']['type'] == 'node':
+        truck.start_node_id = request.data['start']['id']
+    elif request.data['start']['type'] == 'edge':
+        truck.start_edge_id = request.data['start']['id']
+
+    if request.data['finish']['type'] == 'node':
+        truck.end_node_id = request.data['start']['id']
+    elif request.data['finish']['type'] == 'edge':
+        truck.end_edge_id = request.data['start']['id']
+
+    truck.save()
+
+    return Response(TruckSerializer(truck).data)
+
 

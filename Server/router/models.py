@@ -30,12 +30,14 @@ class Route(CommonModel):
 
 
 class Node(CommonModel):
+    class Meta:
+        verbose_name = 'Intersection'
+        verbose_name_plural = 'Intersections'
+
     longitude = models.CharField(max_length=30)
     latitude = models.CharField(max_length=30)
 
     adjacent_nodes = models.ManyToManyField('self', blank=True)
-
-    all_distances_calculated = models.BooleanField(default=False)
 
     is_gate = models.BooleanField(default=False)
 
@@ -61,6 +63,10 @@ class Node(CommonModel):
 
 
 class Edge(CommonModel):
+    class Meta:
+        verbose_name = 'Road'
+        verbose_name_plural = 'Roads'
+
     node_1 = models.ForeignKey(Node, models.CASCADE, related_name='_start_edges')
     node_2 = models.ForeignKey(Node, models.CASCADE, related_name='_end_edges')
 
@@ -85,9 +91,38 @@ class Edge(CommonModel):
         super(Edge, self).save(*args, **kwargs)
 
     @staticmethod
+    def get_edge(n1: Node, n2: Node):
+        return Edge.objects.get(
+            node_1=min(n1, n2, key=lambda x: x.id),
+            node_2=max(n1, n2, key=lambda x: x.id),
+        )
+
+
+    @staticmethod
     def get_edge_ids(n1, n2):
         if n1 > n2:
             return Edge.objects.get(node_1=n2, node_2=n1)
         else:
             return Edge.objects.get(node_1=n1, node_2=n2)
+
+
+class Truck(CommonModel):
+    height = models.FloatField(null=True)
+    width = models.FloatField(null=True)
+    weight = models.FloatField(null=True)
+    turn_radius = models.FloatField(null=True)
+
+    start_node = models.ForeignKey(Node, models.CASCADE, null=True, related_name='trucks_starting')
+    end_node = models.ForeignKey(Node, models.CASCADE, null=True, related_name='trucks_ending')
+
+    start_edge = models.ForeignKey(Edge, models.CASCADE, null=True, related_name='trucks_starting')
+    end_edge = models.ForeignKey(Edge, models.CASCADE, null=True, related_name='trucks_ending')
+
+    def save(self, *args, **kwargs):
+        super(Truck, self).save(*args, **kwargs)
+        start = self.start_node or self.start_edge or None
+        end = self.end_node or self.end_edge or None
+
+        if (self.start_node or self.start_edge) and (self.end_edge)
+
 

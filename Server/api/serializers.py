@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from router.models import Node, Edge
+from router.models import Node, Edge, Truck, Route
 
 
 class NodeSerializer(serializers.ModelSerializer):
@@ -26,4 +26,28 @@ class EdgeSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'node_1', 'node_2', 'distance', 'time', 'has_bus_stop', 'max_height', 'max_width', 'open',
             'max_weight'
+        )
+
+
+class TruckSerializer(serializers.ModelSerializer):
+    start_node = NodeSerializer()
+    end_node = NodeSerializer()
+
+    start_edge = EdgeSerializer()
+    end_edge = EdgeSerializer()
+
+    class Meta:
+        model = Truck
+        fields = (
+            'id', 'height', 'width', 'weight', 'turn_radius', 'start_node', 'end_node', 'start_edge', 'end_edge',
+        )
+
+
+class RouteSerializer(serializers.ModelSerializer):
+    route = NodeSerializer(many=True)
+
+    class Meta:
+        model = Route
+        fields = (
+            'id', 'route_ids_json', 'route',
         )
