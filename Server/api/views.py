@@ -20,7 +20,7 @@ from router.jobs import calculate_distances
 class EdgeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
     # permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
-    filter_fields = ('id',)
+    filter_fields = ('id', 'has_bus_stop')
     queryset = Edge.objects.all()
     serializer_class = EdgeSerializer
 
