@@ -18,6 +18,9 @@ class NodeSerializer(serializers.ModelSerializer):
 
 
 class EdgeSerializer(serializers.ModelSerializer):
+    node_1 = NodeSerializer()
+    node_2 = NodeSerializer()
+
     class Meta:
         model = Edge
         fields = (
