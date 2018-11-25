@@ -36,7 +36,7 @@ export default {
     initMap: async function() {
       this.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 52.588262, lng: 19.67104 },
-        zoom: 15
+        zoom: 14
       });
 
       let opt = {
