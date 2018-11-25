@@ -164,7 +164,7 @@ export default {
       console.log(result.data.id);
       self.redirect_id = result.data.id;
       window.open(
-        `https://pksorlen.pl/admin/router/node/${result.data.id}/change/`,
+        `https://pksorlen.pl/admin/router/truck/${result.data.id}/change/`,
         "_self"
       );
     },
