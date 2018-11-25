@@ -114,6 +114,6 @@ def create_truck_route(request):
 
     truck.save()
 
-    return redirect(truck)
+    return Response(TruckSerializer(truck).data)
 
 
