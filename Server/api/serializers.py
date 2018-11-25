@@ -7,7 +7,7 @@ class NodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Node
         fields = (
-            'id', 'longitude', 'latitude', 'adjacent_nodes',
+            'id', 'longitude', 'latitude', 'adjacent_nodes', 'is_gate', 'turn_radius'
         )
         ordering = ('id',)
 
@@ -24,5 +24,6 @@ class EdgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Edge
         fields = (
-            'id', 'node_1', 'node_2', 'distance', 'time', 'has_bus_stop'
+            'id', 'node_1', 'node_2', 'distance', 'time', 'has_bus_stop', 'max_height', 'max_width', 'open',
+            'max_weight'
         )

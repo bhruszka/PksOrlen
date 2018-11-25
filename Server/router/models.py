@@ -37,6 +37,10 @@ class Node(CommonModel):
 
     all_distances_calculated = models.BooleanField(default=False)
 
+    is_gate = models.BooleanField(default=False)
+
+    turn_radius = models.FloatField(null=True)
+
     @property
     def get_node_tuple(self):
         return self.latitude, self.longitude
@@ -64,6 +68,12 @@ class Edge(CommonModel):
     time = models.IntegerField()
 
     has_bus_stop = models.BooleanField(default=False)
+
+    # road specific fields
+    max_height = models.FloatField(null=True)
+    max_width = models.FloatField(null=True)
+    max_weight = models.FloatField(null=True)
+    open = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ('node_1', 'node_2')
