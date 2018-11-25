@@ -21,5 +21,5 @@ class EdgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Edge
         fields = (
-            'id', 'node_1', 'node_2', 'distance', 'time'
+            'id', 'node_1', 'node_2', 'distance', 'time', 'has_bus_stop'
         )

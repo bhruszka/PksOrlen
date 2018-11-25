@@ -63,6 +63,8 @@ class Edge(CommonModel):
     distance = models.IntegerField()
     time = models.IntegerField()
 
+    has_bus_stop = models.BooleanField(default=False)
+
     class Meta:
         unique_together = ('node_1', 'node_2')
 
