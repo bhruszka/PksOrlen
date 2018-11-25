@@ -8,6 +8,7 @@
       <p style="background-color: white; padding: 5px; radius: 8px; margin-top: 8px;">
         Instrukcja:<br>
         Wybierz poczatek i koniec trasy - obie wartosci moga byc droga lub skrzyzowaniem.
+        Po wygenerowaniu droga jest dostepna w aplikacji mobilnej.
       </p>
     </div>
   </div>
