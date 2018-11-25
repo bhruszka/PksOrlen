@@ -6,8 +6,8 @@ import "./registerServiceWorker";
 import "bulma/css/bulma.css";
 
 Vue.config.productionTip = false;
-axios.defaults.headers.common["Authorization"] =
-  "Token " + localStorage.getItem("token");
+// axios.defaults.headers.common["Authorization"] =
+//   "Token " + localStorage.getItem("token");
 Vue.prototype.$http = axios;
 
 new Vue({

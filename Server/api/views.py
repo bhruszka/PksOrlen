@@ -64,7 +64,7 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
                 calculate_distances.delay(res.data['id'])
 
         return res
-
+    
     def partial_update(self, request, *args, **kwargs):
         res = super(NodeViewSet, self).partial_update(request, *args, **kwargs)
         if isinstance(request.data, list):
