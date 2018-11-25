@@ -7,6 +7,7 @@ from rest_framework.authtoken import views as token_views
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
 router.register(r'nodes', api_views.NodeViewSet)
+router.register(r'edges', api_views.EdgeViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
