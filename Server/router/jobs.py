@@ -29,8 +29,6 @@ def calculate_distances(node_id):
             n1 = min(node, n, key=lambda x: x.id)
             n2 = max(node, n, key=lambda x: x.id)
 
-            logger.info('{}, {}'.format(n1.id, n2.id))
-
             try:
                 edge = Edge.objects.get(
                     node_1=n1,
