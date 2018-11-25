@@ -2,6 +2,9 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 import Map from "./components/Map.vue";
+import Stops from "./views/Stops.vue";
+import Routes from "./views/Routes.vue";
+
 
 Vue.use(Router);
 
@@ -18,6 +21,16 @@ export default new Router({
       path: "/map",
       name: "map",
       component: Map
+    },
+    {
+      path: "/stops",
+      name: "stops",
+      component: Stops
+    },
+    {
+      path: "/routes",
+      name: "routes",
+      component: Routes
     },
     {
       path: "/about",

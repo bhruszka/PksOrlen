@@ -172,8 +172,6 @@ export default {
       }
     },
     addRouteNoRemove: function(n1, n2) {
-      console.log(n1);
-      console.log(n2);
       let index = n1.routes.findIndex(x => x.line.n1 == n2 || x.line.n2 == n2);
       if (index != -1) {
         return;
