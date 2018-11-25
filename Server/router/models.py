@@ -127,7 +127,6 @@ class Truck(CommonModel):
     qr_code = models.ImageField(null=True, blank=True, upload_to="qr_codes/")
 
     def save(self, *args, **kwargs):
-        from router.utils.route_finder import create_route
 
         if self.start_node:
             start = self.start_node
@@ -154,7 +153,9 @@ class Truck(CommonModel):
             else:
                 end_node = end
 
-            self.route = create_route(start_node, end_node)
+            from router.jobs import create_route
+            if self.id:
+                create_route.delay(start_node.id, end_node.id, self.id)
 
         super(Truck, self).save(*args, **kwargs)
 

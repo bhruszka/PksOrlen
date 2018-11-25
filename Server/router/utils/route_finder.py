@@ -1,3 +1,4 @@
+from pksorlen.celery import app
 import json
 import sys
 from collections import defaultdict
@@ -44,29 +45,5 @@ class Route:
 def get_feasible_nodes(route: Route):
     return route.path[-1].adjacent_nodes.exclude(id__in=[n.id for n in route.path])
 
-
-def create_route(initial_node, destination_node):
-    routes = [Route()]
-    routes[0].append(initial_node)
-
-    while not any(destination_node in route for route in routes):
-        new_routes = []
-        for route in routes:
-            for node in get_feasible_nodes(route):
-                new_routes.append(route.copy_and_append(node))
-
-        routes += new_routes
-
-    final_route = None
-    for route in routes:
-        if destination_node in route:
-            final_route = route
-            break
-
-    assert final_route is not None
-
-    return RouteModel.objects.create(
-        route_ids_json=json.dumps([node.id for node in final_route.path])
-    )
 
 

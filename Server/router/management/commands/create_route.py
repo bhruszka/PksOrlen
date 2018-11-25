@@ -5,8 +5,7 @@ import random
 from django.core.management import BaseCommand
 
 from router.models import Node
-from router.utils.route_finder import create_route
-
+from router.jobs import create_route
 logger = logging.getLogger(__name__)
 
 

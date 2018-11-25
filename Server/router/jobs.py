@@ -48,3 +48,41 @@ def calculate_distances(node_id):
 
     node.all_distances_calculated = True
     node.save()
+
+
+@app.task
+def create_route(initial_node_id, destination_node_id, truck_id=None):
+    from router.models import Node, Edge, Route as RouteModel
+    from router.utils.route_finder import get_feasible_nodes
+    initial_node = Node.objects.get(id=initial_node_id)
+    destination_node = Node.objects.get(id=destination_node_id)
+
+    from router.utils.route_finder import Route
+    routes = [Route()]
+    routes[0].append(initial_node)
+
+    while not any(destination_node in route for route in routes):
+        new_routes = []
+        for route in routes:
+            for node in get_feasible_nodes(route):
+                new_routes.append(route.copy_and_append(node))
+
+        routes += new_routes
+
+    final_route = None
+    for route in routes:
+        if destination_node in route:
+            final_route = route
+            break
+
+    assert final_route is not None
+
+    import json
+    r = RouteModel.objects.create(
+        route_ids_json=json.dumps([node.id for node in final_route.path])
+    )
+
+    if truck_id:
+        from router.models import Truck
+        Truck.objects.get(id=truck_id).update(route=r)
+
