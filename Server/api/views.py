@@ -106,9 +106,9 @@ def create_truck_route(request):
         truck.start_edge = Edge.objects.get(id=request.data['start']['id'])
 
     if request.data['finish']['type'] == 'node':
-        truck.end_node = Node.objects.get(id=request.data['start']['id'])
+        truck.end_node = Node.objects.get(id=request.data['finish']['id'])
     elif request.data['finish']['type'] == 'edge':
-        truck.end_edge = Edge.objects.get(id=request.data['start']['id'])
+        truck.end_edge = Edge.objects.get(id=request.data['finish']['id'])
 
     truck.save()
 
