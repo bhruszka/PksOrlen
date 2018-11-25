@@ -101,14 +101,14 @@ def bulk_patch_node(request):
 def create_truck_route(request):
     truck = Truck()
     if request.data['start']['type'] == 'node':
-        truck.start_node_id = request.data['start']['id']
+        truck.start_node = Node.objects.get(request.data['start']['id'])
     elif request.data['start']['type'] == 'edge':
-        truck.start_edge_id = request.data['start']['id']
+        truck.start_edge = Edge.objects.get(request.data['start']['id'])
 
     if request.data['finish']['type'] == 'node':
-        truck.end_node_id = request.data['start']['id']
+        truck.end_node = Node.objects.get(request.data['start']['id'])
     elif request.data['finish']['type'] == 'edge':
-        truck.end_edge_id = request.data['start']['id']
+        truck.end_edge = Edge.objects.get(request.data['start']['id'])
 
     truck.save()
 
