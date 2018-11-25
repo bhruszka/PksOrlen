@@ -1,23 +1,26 @@
 <template>
-  <div>
-    <div id="map"></div>
-    <div class="menu" style="z-index: 9; position: absolute; top: 8px;">
-      <a href="/" class="button"><strong>Main Page</strong></a>
-
-      <p style="background-color: white; padding: 5px; radius: 8px; margin-top: 8px;">
-        Instrukcja:<br>
-        Pojedyncze klikniecie na skrzyzowanie lub drogę - przekierowanie do widoku edytowania.
-      </p>
+    <div>
+        <div id="map"></div>
+        <div class="menu" style="z-index: 9; position: absolute; top: 8px;">
+            <a href="/" class="button"><strong>Main Page</strong></a>
+            <a class="button" href="/width">Mapa szerokości dróg</a>
+            <a class="button" href="/height">Mapa dopuszczalnej wysokosci pojazdow</a>
+            <p style="background-color: white; padding: 5px; radius: 8px; margin-top: 8px;">
+                Mapa dopuszczalnej wagi pojazdow.
+                Szary - brak danych.
+            </p>
+        </div>
     </div>
-  </div>
 </template>
 <script>
 export default {
   data() {
     return {
       map: null,
-      nodes: [],
-      selectedNode: null
+      start: null,
+      finish: null,
+      my_data: null,
+      redirect_id: null
     };
   },
   mounted() {
@@ -51,7 +54,6 @@ export default {
         if (strictBounds.contains(self.map.getCenter())) return;
 
         // We're out of bounds - Move the map back within the bounds
-        console.log(self.map);
         var c = self.map.getCenter(),
           x = c.lng(),
           y = c.lat(),
@@ -78,39 +80,42 @@ export default {
       //   });
 
       result.data.forEach(n => {
-        this.createRoute(n.node_1, n.node_2, n.id, n.has_bus_stop);
+        this.createRoute(
+          n.node_1,
+          n.node_2,
+          n.id,
+          n.max_weight,
+          n.has_bus_stop
+        );
       });
     },
     addMarker: function(latlng, id) {
-      console.log(latlng);
       var marker = new google.maps.Marker({
         position: latlng,
         map: this.map,
         icon: "https://castdeo.ams3.cdn.digitaloceanspaces.com/intersection.png"
       });
       marker.id = id;
-      google.maps.event.addListener(marker, "click", function(event) {
-        window.open(
-          `https://pksorlen.pl/admin/router/node/${marker.id}/change/`,
-          "_self"
-        );
-      });
+      marker.type = "node";
+      let self = this;
     },
-    createRoute: function(n1, n2, id, has_bus_stop = false) {
+    createRoute: function(n1, n2, id, width, has_bus_stop = false) {
+      console.log(width);
       var line = new google.maps.Polyline({
         path: [
           { lat: Number(n1.latitude), lng: Number(n1.longitude) },
           { lat: Number(n2.latitude), lng: Number(n2.longitude) }
         ],
-        strokeColor: "#FF0000",
+        strokeColor: width == null ? "#AAAAAA" : "#FF0000",
         strokeOpacity: 1.0,
-        strokeWeight: 5,
+        title: `Width: ${width == null ? 2.0 : width}`,
+        strokeWeight: width == null ? 2.0 : width,
         map: this.map
       });
 
-      console.log(`id: ${id}`);
       line.id = id;
       line.has_bus_stop = has_bus_stop;
+      line.type = "edge";
 
       this.addMarker(
         { lat: Number(n1.latitude), lng: Number(n1.longitude) },
@@ -120,15 +125,16 @@ export default {
         { lat: Number(n2.latitude), lng: Number(n2.longitude) },
         n2.id
       );
-
-      let self = this;
-      google.maps.event.addListener(line, "click", function(event) {
-        window.open(
-          `https://pksorlen.pl/admin/router/edge/${line.id}/change/`,
-          "_self"
-        );
-      });
     }
   }
 };
 </script>
+<style>
+.menu {
+  z-index: 9;
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+</style>

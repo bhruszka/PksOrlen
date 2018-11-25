@@ -5,6 +5,9 @@ import Map from "./components/Map.vue";
 import Stops from "./views/Stops.vue";
 import Routes from "./views/Routes.vue";
 import Trucks from "./views/Trucks.vue";
+import Height from "./views/HeightMap.vue";
+import Width from "./views/WidthMap.vue";
+import Weight from "./views/WeightMap.vue";
 
 Vue.use(Router);
 
@@ -36,6 +39,21 @@ export default new Router({
       path: "/trucks",
       name: "trucks",
       component: Trucks
+    },
+    {
+      path: "/height",
+      name: "height",
+      component: Height
+    },
+    {
+      path: "/width",
+      name: "width",
+      component: Width
+    },
+    {
+      path: "/weight",
+      name: "weight",
+      component: Weight
     },
     {
       path: "/about",

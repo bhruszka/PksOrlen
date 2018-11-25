@@ -2,8 +2,7 @@
   <div>
     <div id="map"></div>
     <div class="menu" style="z-index: 9; position: absolute; top: 8px;">
-      <a v-if="redirect_id != null" class="button" href=""><strong>Wypłenij szczegóły trasy ciężarówki</strong></a>
-
+      <a href="/" class="button"><strong>Main Page</strong></a>
       <a @click="postTruck" class="button"><strong>Submit</strong></a>
       <a @click="reset" class="button"><strong>Reset</strong></a>
       <p style="background-color: white; padding: 5px; radius: 8px; margin-top: 8px;">
@@ -37,7 +36,7 @@ export default {
     initMap: async function() {
       this.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 52.588262, lng: 19.67104 },
-        zoom: 15
+        zoom: 14
       });
 
       let opt = {
