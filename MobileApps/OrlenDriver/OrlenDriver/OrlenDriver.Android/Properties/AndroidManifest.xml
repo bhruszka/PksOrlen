@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.OrlenDriver" android:installLocation="auto">
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="27" />
+	<application android:label="OrlenDriver.Android" android:icon="@drawable/logo_icon">
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBbU8a4ySNmGepBLM1YJXMCZr8lMDu6GRU" />
+	</application>
+</manifest>

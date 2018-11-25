@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="OrlenDriver.View.MapPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:customrenderers="clr-namespace:OrlenDriver.CustomRenderers">
+    <ContentPage.Content>
+        <StackLayout
+            HorizontalOptions="FillAndExpand"
+            Orientation="Vertical"
+            VerticalOptions="FillAndExpand">
+
+
+            <StackLayout
+                x:Name="MainFrame"
+                BackgroundColor="Transparent"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand">
+                <customrenderers:RouteMap
+                    x:Name="MyMap"
+                    HorizontalOptions="FillAndExpand"
+                    IsShowingUser="true"
+                    MapType="Street"
+                    VerticalOptions="FillAndExpand" />
+
+                <Button
+                    BackgroundColor="Gray"
+                    Command="{Binding TrackCommand}"
+                    FontSize="Small"
+                    HeightRequest="50"
+                    HorizontalOptions="FillAndExpand"
+                    Text="{Binding KeepTrack}"
+                    TextColor="White"
+                    VerticalOptions="End" />
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
