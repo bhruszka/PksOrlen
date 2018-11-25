@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
-
+from django.shortcuts import redirect
 from api.mixins import BulkyMethodsMixin
 from api.serializers import NodeSerializer, EdgeSerializer, TruckSerializer, RouteSerializer
 from router.models import Node, Edge, Truck, Route
@@ -112,6 +112,6 @@ def create_truck_route(request):
 
     truck.save()
 
-    return Response(TruckSerializer(truck).data)
+    return redirect(truck)
 
 
