@@ -1,7 +1,9 @@
 <template>
   <div>
     <div id="map"></div>
-    <div v-if="redirect_id == null" class="menu" style="z-index: 9; position: absolute; top: 8px;">
+    <div class="menu" style="z-index: 9; position: absolute; top: 8px;">
+      <a v-if="redirect_id != null" class="button" href=""><strong>Wypłenij szczegóły trasy ciężarówki</strong></a>
+
       <a @click="postTruck" class="button"><strong>Submit</strong></a>
       <a @click="reset" class="button"><strong>Reset</strong></a>
       <p style="background-color: white; padding: 5px; radius: 8px; margin-top: 8px;">
@@ -9,7 +11,6 @@
         Wybierz poczatek i koniec trasy - obie wartosci moga byc droga lub skrzyzowaniem.
       </p>
     </div>
-    <a v-else class="button"><strong>Reset</strong></a>
   </div>
 </template>
 <script>
@@ -160,12 +161,12 @@ export default {
           this.finish.id
         }&finish_type=${this.finish.type}`
       );
-      console.log(result.data.id)
-      // window.open(
-      //     `https://pksorlen.pl/admin/router/node/${result.data.id}/change/`,
-      //     "_self"
-      //   );
-
+      console.log(result.data.id);
+      self.redirect_id = result.data.id;
+      window.open(
+        `https://pksorlen.pl/admin/router/node/${result.data.id}/change/`,
+        "_self"
+      );
     },
     reset: function() {
       console.log("reset");
