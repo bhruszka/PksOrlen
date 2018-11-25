@@ -29,20 +29,6 @@ class EdgeSerializer(serializers.ModelSerializer):
         )
 
 
-class TruckSerializer(serializers.ModelSerializer):
-    start_node = NodeSerializer()
-    end_node = NodeSerializer()
-
-    start_edge = EdgeSerializer()
-    end_edge = EdgeSerializer()
-
-    class Meta:
-        model = Truck
-        fields = (
-            'id', 'height', 'width', 'weight', 'turn_radius', 'start_node', 'end_node', 'start_edge', 'end_edge',
-        )
-
-
 class RouteSerializer(serializers.ModelSerializer):
     route = NodeSerializer(many=True)
 
@@ -50,4 +36,21 @@ class RouteSerializer(serializers.ModelSerializer):
         model = Route
         fields = (
             'id', 'route_ids_json', 'route',
+        )
+
+
+class TruckSerializer(serializers.ModelSerializer):
+    start_node = NodeSerializer()
+    end_node = NodeSerializer()
+
+    start_edge = EdgeSerializer()
+    end_edge = EdgeSerializer()
+
+    route = RouteSerializer()
+
+    class Meta:
+        model = Truck
+        fields = (
+            'id', 'height', 'width', 'weight', 'turn_radius', 'start_node', 'end_node', 'start_edge', 'end_edge',
+            'route',
         )
