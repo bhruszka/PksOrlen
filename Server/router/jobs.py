@@ -84,5 +84,5 @@ def create_route(initial_node_id, destination_node_id, truck_id=None):
 
     if truck_id:
         from router.models import Truck
-        Truck.objects.get(truck_id).update(route=r)
+        Truck.objects.get(id=truck_id).update(route=r)
 
