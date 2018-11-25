@@ -123,17 +123,26 @@ class Truck(CommonModel):
     def save(self, *args, **kwargs):
         from router.utils.route_finder import create_route
 
-        start = self.start_node or self.start_edge or None
-        end = self.end_node or self.end_edge or None
+        if self.start_node:
+            start = self.start_node
+        elif self.start_edge:
+            start = self.start_edge
+        else:
+            start = None
+
+        if self.end_node:
+            end = self.end_node
+        elif self.end_edge:
+            end = self.end_edge
+        else:
+            end = None
 
         if start and end:
-            start_node = None
             if isinstance(start, Edge):
                 start_node = start.node_1
             else:
                 start_node = start
 
-            end_node = None
             if isinstance(end, Edge):
                 end_node = end.node_1
             else:
