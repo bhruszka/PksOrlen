@@ -6,7 +6,7 @@ from django.conf import settings
 
 @app.task
 def calculate_distances(node_id):
-    from router.models import Node, Distance
+    from router.models import Node, Edge
 
     node = Node.objects.get(pk=node_id)
 
@@ -26,7 +26,7 @@ def calculate_distances(node_id):
             n1 = min(node, n, key=lambda x: x.id)
             n2 = max(node, n, key=lambda x: x.id)
 
-            dist = Distance.objects.get_or_create(
+            dist = Edge.objects.get_or_create(
                 start_point=n1,
                 end_point=n2,
             )

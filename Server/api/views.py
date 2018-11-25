@@ -28,9 +28,9 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
     serializer_class = NodeSerializer
 
     def create(self, request, *args, **kwargs):
-        res = super(NodeViewSet, self).create(request, *args, **kwargs)
-        if isinstance(kwargs.get('data', {}), list):
+        if isinstance(request.data, list):
             Node.objects.all().delete()
+        res = super(NodeViewSet, self).create(request, *args, **kwargs)
         if 'id' in res.data and res.data['adjacent_nodes']:
             calculate_distances.delay(res.data['id'])
         return res
@@ -48,9 +48,10 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
 def bulk_patch_node(request):
     assert isinstance(request.data, list)
 
-    serializer = NodeSerializer(data=request.data, many=True, partial=True)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
+    for node in request.data:
+        serializer = NodeSerializer(Node.objects.get(id=node['id']), data=node, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
     return Response('OK')
 
