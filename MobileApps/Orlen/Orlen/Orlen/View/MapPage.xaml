@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Orlen.View.MapPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:customrenderers="clr-namespace:Orlen.CustomRenderers"
+    xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps">
+    <ContentPage.Content>
+        <StackLayout
+            HorizontalOptions="FillAndExpand"
+            Orientation="Vertical"
+            VerticalOptions="FillAndExpand">
+
+            <StackLayout
+                x:Name="MainFrame"
+                BackgroundColor="Transparent"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand">
+
+                <customrenderers:RouteMap
+                    x:Name="MyMap"
+                    HorizontalOptions="FillAndExpand"
+                    IsShowingUser="true"
+                    MapType="Street"
+                    VerticalOptions="FillAndExpand" />
+                <Grid
+                    Margin="0"
+                    BackgroundColor="White"
+                    ColumnSpacing="2"
+                    HeightRequest="60"
+                    HorizontalOptions="FillAndExpand"
+                    RowSpacing="0"
+                    VerticalOptions="End">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="60" />
+                    </Grid.RowDefinitions>
+
+                    <StackLayout
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        BackgroundColor="{StaticResource GrayColor}"
+                        Orientation="Horizontal">
+                        <Image
+                            Margin="10"
+                            HorizontalOptions="Center"
+                            Source="bus.png"
+                            VerticalOptions="Center" />
+                        <Label
+                            HorizontalOptions="Start"
+                            Text="Rozkład jazdy"
+                            TextColor="White"
+                            VerticalOptions="CenterAndExpand" />
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ShowTimetableCommand}" />
+                        </StackLayout.GestureRecognizers>
+                    </StackLayout>
+                    <StackLayout
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        BackgroundColor="{StaticResource RedColor}"
+                        Orientation="Horizontal">
+                        <Image
+                            Margin="10"
+                            HorizontalOptions="Center"
+                            Source="map.png"
+                            VerticalOptions="Center" />
+                        <Label
+                            HorizontalOptions="Start"
+                            Text="Mapa"
+                            TextColor="White"
+                            VerticalOptions="CenterAndExpand" />
+
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

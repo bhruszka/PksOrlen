@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Orlen.View.TimetablePage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Content>
+        <StackLayout
+            HorizontalOptions="FillAndExpand"
+            Orientation="Vertical"
+            Spacing="0"
+            VerticalOptions="FillAndExpand">
+            <Grid
+                HorizontalOptions="FillAndExpand"
+                RowSpacing="0"
+                VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="70" />
+
+                </Grid.RowDefinitions>
+                <StackLayout
+                    Grid.Row="0"
+                    Margin="10,10,10,0"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    VerticalOptions="FillAndExpand">
+                    <Label Text="Lista przystanków" VerticalOptions="Center" />
+                    <Entry
+                        HorizontalOptions="FillAndExpand"
+                        Placeholder="Szukaj"
+                        Text="{Binding LineSearchText}"
+                        VerticalOptions="Center" />
+                </StackLayout>
+                <StackLayout
+                    Grid.Row="1"
+                    Margin="10,10,10,10"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Vertical"
+                    VerticalOptions="FillAndExpand">
+                    <ListView
+                        x:Name="listView"
+                        Margin="0"
+                        IsRefreshing="{Binding Busy}"
+                        ItemsSource="{Binding TimetableList}"
+                        SelectedItem="{Binding SelectedLine}"
+                        SeparatorColor="Gray"
+                        SeparatorVisibility="Default"
+                        VerticalOptions="FillAndExpand">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout BackgroundColor="Transparent" Orientation="Horizontal">
+                                        <Frame
+                                            Padding="2"
+                                            BackgroundColor="{StaticResource RedColor}"
+                                            BorderColor="White"
+                                            CornerRadius="20"
+                                            HeightRequest="25"
+                                            HorizontalOptions="Start"
+                                            OutlineColor="White"
+                                            VerticalOptions="CenterAndExpand"
+                                            WidthRequest="25">
+                                            <Label
+                                                FontSize="Default"
+                                                HorizontalOptions="Center"
+                                                Text="{Binding LineNumber}"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
+                                        </Frame>
+                                        <Label
+                                            Margin="10,0,0,0"
+                                            FontSize="Default"
+                                            HorizontalOptions="Start"
+                                            Text="{Binding LineFrom}"
+                                            TextColor="Black"
+                                            VerticalOptions="Center" />
+                                        <Image
+                                            HorizontalOptions="Center"
+                                            Source="arrow_right.png"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Margin="0,0,10,0"
+                                            FontSize="Default"
+                                            HorizontalOptions="End"
+                                            Text="{Binding LineTo}"
+                                            TextColor="Black"
+                                            VerticalOptions="Center" />
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
+
+                <Image
+                    Grid.Row="1"
+                    Margin="0,0,25,15"
+                    HeightRequest="60"
+                    HorizontalOptions="EndAndExpand"
+                    Source="fab.png"
+                    VerticalOptions="EndAndExpand"
+                    WidthRequest="60">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddNewClientCommand}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <StackLayout
+                    Grid.Row="2"
+                    Margin="0"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Vertical"
+                    Spacing="0"
+                    VerticalOptions="EndAndExpand">
+
+                    <Grid
+                        Margin="0"
+                        BackgroundColor="White"
+                        ColumnSpacing="2"
+                        HeightRequest="60"
+                        HorizontalOptions="FillAndExpand"
+                        RowSpacing="0"
+                        VerticalOptions="End">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                        </Grid.RowDefinitions>
+                        <StackLayout
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            BackgroundColor="{StaticResource RedColor}"
+                            Orientation="Horizontal">
+                            <Image
+                                Margin="10"
+                                HorizontalOptions="Center"
+                                Source="bus.png"
+                                VerticalOptions="Center" />
+                            <Label
+                                HorizontalOptions="Start"
+                                Text="Rozkład Jazdy"
+                                TextColor="White"
+                                VerticalOptions="CenterAndExpand" />
+
+                        </StackLayout>
+                        <StackLayout
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            BackgroundColor="{StaticResource GrayColor}"
+                            Orientation="Horizontal">
+                            <Image
+                                Margin="10"
+                                HorizontalOptions="Center"
+                                Source="map.png"
+                                VerticalOptions="Center" />
+                            <Label
+                                HorizontalOptions="Start"
+                                Text="Mapa"
+                                TextColor="White"
+                                VerticalOptions="CenterAndExpand" />
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ShowMapCommand}" />
+                            </StackLayout.GestureRecognizers>
+                        </StackLayout>
+                    </Grid>
+                </StackLayout>
+            </Grid>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
