@@ -1,8 +1,15 @@
 <template>
-    <div>
-        <div id="map"></div>
-        <button style="z-index: 9; position: absolute; top: 50px;">Submit</button>
+  <div>
+    <div id="map"></div>
+    <div class="menu" style="z-index: 9; position: absolute; top: 8px;">
+      <a href="/" class="button"><strong>Main Page</strong></a>
+      <p style="background-color: white; padding: 5px; radius: 8px; margin-top: 8px;">
+        Instrukcja:<br>
+        Podwojne klikniecie na drogę - dodanie przystanku <br>
+        Ponowne podwojne klikniecie na drogę - usunięcie przystanku <br>
+      </p>
     </div>
+  </div>
 </template>
 <script>
 export default {
@@ -153,31 +160,6 @@ export default {
       let self = this;
       google.maps.event.addListener(line, "dblclick", function(event) {
         self.addStop(this);
-      });
-    },
-    postStops: async function() {
-      let data = [];
-      this.nodes.forEach((n, index) => {
-        n.id = index + 1;
-      });
-      this.nodes.forEach((n, index) => {
-        let adjacent_nodes = n.routes.map(x => x.id);
-        data.push({
-          id: n.id,
-          longitude: n.position.lng(),
-          latitude: n.position.lat()
-        });
-      });
-      await this.$http.post("https://pksorlen.pl/api/nodes/", data);
-
-      this.nodes.forEach((n, index) => {
-        let adjacent_nodes = n.routes.map(
-          x => x.line[x.index == 1 ? "n1" : "n2"].id
-        );
-        this.$http.patch(`https://pksorlen.pl/api/nodes/${n.id}/`, {
-          pk: n.id,
-          adjacent_nodes: adjacent_nodes
-        });
       });
     }
   }
