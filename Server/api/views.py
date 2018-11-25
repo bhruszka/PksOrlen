@@ -10,15 +10,31 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
-
+from django.shortcuts import redirect
 from api.mixins import BulkyMethodsMixin
-from api.serializers import NodeSerializer, EdgeSerializer
-from router.models import Node, Edge
+from api.serializers import NodeSerializer, EdgeSerializer, TruckSerializer, RouteSerializer
+from router.models import Node, Edge, Truck, Route
 from router.jobs import calculate_distances
 
 
+class RouteViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
+    filter_fields = ('id',)
+    queryset = Route.objects.all()
+    serializer_class = RouteSerializer
+
+
+class TruckViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
+    filter_fields = ('id',)
+    queryset = Truck.objects.all()
+    serializer_class = TruckSerializer
+
+
 class EdgeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
-    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
     filter_fields = ('id', 'has_bus_stop')
     queryset = Edge.objects.all()
@@ -29,7 +45,7 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
     """
-    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, OrderingFilter)
     filter_fields = ('id',)
     queryset = Node.objects.all()
@@ -66,6 +82,7 @@ class NodeViewSet(BulkyMethodsMixin, viewsets.ModelViewSet):
 
 
 @api_view(['PATCH'])
+@permission_classes((permissions.AllowAny, ))
 def bulk_patch_node(request):
     assert isinstance(request.data, list)
 
@@ -82,6 +99,21 @@ def bulk_patch_node(request):
 
 
 @api_view(['GET'])
-def create_route(request, start_node_id, destination_node_id):
-    pass
+@permission_classes((permissions.AllowAny, ))
+def create_truck_route(request):
+    truck = Truck()
+    if request.query_params['start_type'] == 'node':
+        truck.start_node = Node.objects.get(id=request.query_params['start_id'])
+    elif request.query_params['start_type'] == 'edge':
+        truck.start_edge = Edge.objects.get(id=request.query_params['start_id'])
+
+    if request.query_params['finish_type'] == 'node':
+        truck.end_node = Node.objects.get(id=request.query_params['finish_id'])
+    elif request.query_params['finish_type'] == 'edge':
+        truck.end_edge = Edge.objects.get(id=request.query_params['finish_id'])
+
+    truck.save()
+
+    return Response(TruckSerializer(truck).data)
+
 
